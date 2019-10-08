@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="ShoppingModelStoreContainer" CdmEntityContainer="ShoppingEntities">
+    <EntitySetMapping Name="Carts">
+      <EntityTypeMapping TypeName="ShoppingModel.Cart">
+        <MappingFragment StoreEntitySet="Cart">
+          <ScalarProperty Name="CId" ColumnName="CId" />
+          <ScalarProperty Name="ItemId" ColumnName="ItemId" />
+          <ScalarProperty Name="Qty" ColumnName="Qty" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Customers">
+      <EntityTypeMapping TypeName="ShoppingModel.Customer">
+        <MappingFragment StoreEntitySet="Customer">
+          <ScalarProperty Name="CustomerCode" ColumnName="CustomerCode" />
+          <ScalarProperty Name="DesAr" ColumnName="DesAr" />
+          <ScalarProperty Name="DesEn" ColumnName="DesEn" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Items">
+      <EntityTypeMapping TypeName="ShoppingModel.Item">
+        <MappingFragment StoreEntitySet="Items">
+          <ScalarProperty Name="IId" ColumnName="IId" />
+          <ScalarProperty Name="IName" ColumnName="IName" />
+          <ScalarProperty Name="IDescription" ColumnName="IDescription" />
+          <ScalarProperty Name="Qty" ColumnName="Qty" />
+          <ScalarProperty Name="Price" ColumnName="Price" />
+          <ScalarProperty Name="Image" ColumnName="Image" />
+          <ScalarProperty Name="UOMId" ColumnName="UOMId" />
+          <ScalarProperty Name="DiscountTaxID" ColumnName="DiscountTaxID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Orders">
+      <EntityTypeMapping TypeName="ShoppingModel.Order">
+        <MappingFragment StoreEntitySet="Order">
+          <ScalarProperty Name="OID" ColumnName="OID" />
+          <ScalarProperty Name="OrderDate" ColumnName="OrderDate" />
+          <ScalarProperty Name="RequestDate" ColumnName="RequestDate" />
+          <ScalarProperty Name="DueDate" ColumnName="DueDate" />
+          <ScalarProperty Name="Satuts" ColumnName="Satuts" />
+          <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+          <ScalarProperty Name="DiscountTaxId" ColumnName="DiscountTaxId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="OrderDetails">
+      <EntityTypeMapping TypeName="ShoppingModel.OrderDetail">
+        <MappingFragment StoreEntitySet="OrderDetails">
+          <ScalarProperty Name="ODID" ColumnName="ODID" />
+          <ScalarProperty Name="OrderQty" ColumnName="OrderQty" />
+          <ScalarProperty Name="Total" ColumnName="Total" />
+          <ScalarProperty Name="Net" ColumnName="Net" />
+          <ScalarProperty Name="ItemId" ColumnName="ItemId" />
+          <ScalarProperty Name="OID" ColumnName="OID" />
+          <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="TaxDiscounts">
+      <EntityTypeMapping TypeName="ShoppingModel.TaxDiscount">
+        <MappingFragment StoreEntitySet="TaxDiscount">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="Tax" ColumnName="Tax" />
+          <ScalarProperty Name="Discount" ColumnName="Discount" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="UOMs">
+      <EntityTypeMapping TypeName="ShoppingModel.UOM">
+        <MappingFragment StoreEntitySet="UOM">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Code" ColumnName="Code" />
+          <ScalarProperty Name="Des" ColumnName="Des" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

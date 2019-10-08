@@ -1,0 +1,548 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="ShoppingModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Cart">
+          <Key>
+            <PropertyRef Name="CId" />
+            <PropertyRef Name="ItemId" />
+          </Key>
+          <Property Name="CId" Type="int" Nullable="false" />
+          <Property Name="ItemId" Type="int" Nullable="false" />
+          <Property Name="Qty" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Customer">
+          <Key>
+            <PropertyRef Name="CustomerCode" />
+          </Key>
+          <Property Name="CustomerCode" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DesAr" Type="nvarchar" MaxLength="50" />
+          <Property Name="DesEn" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Items">
+          <Key>
+            <PropertyRef Name="IId" />
+          </Key>
+          <Property Name="IId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IName" Type="nvarchar" MaxLength="50" />
+          <Property Name="IDescription" Type="nvarchar" MaxLength="100" />
+          <Property Name="Qty" Type="int" />
+          <Property Name="Price" Type="decimal" Precision="18" Scale="0" />
+          <Property Name="Image" Type="nvarchar" MaxLength="200" />
+          <Property Name="UOMId" Type="int" />
+          <Property Name="DiscountTaxID" Type="int" />
+        </EntityType>
+        <EntityType Name="Order">
+          <Key>
+            <PropertyRef Name="OID" />
+          </Key>
+          <Property Name="OID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="OrderDate" Type="date" />
+          <Property Name="RequestDate" Type="date" />
+          <Property Name="DueDate" Type="date" />
+          <Property Name="Satuts" Type="nvarchar" MaxLength="50" />
+          <Property Name="CustomerId" Type="int" />
+          <Property Name="DiscountTaxId" Type="int" />
+        </EntityType>
+        <EntityType Name="OrderDetails">
+          <Key>
+            <PropertyRef Name="ODID" />
+          </Key>
+          <Property Name="ODID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="OrderQty" Type="int" />
+          <Property Name="Total" Type="decimal" Precision="18" Scale="0" />
+          <Property Name="Net" Type="decimal" Precision="18" Scale="0" />
+          <Property Name="ItemId" Type="int" Nullable="false" />
+          <Property Name="OID" Type="int" />
+          <Property Name="CustomerId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TaxDiscount">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Tax" Type="decimal" Precision="18" Scale="0" />
+          <Property Name="Discount" Type="decimal" Precision="18" Scale="0" />
+        </EntityType>
+        <EntityType Name="UOM">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Code" Type="nvarchar" MaxLength="50" />
+          <Property Name="Des" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <Association Name="FK_Items_TaxDiscount">
+          <End Role="TaxDiscount" Type="Self.TaxDiscount" Multiplicity="0..1" />
+          <End Role="Items" Type="Self.Items" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TaxDiscount">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Items">
+              <PropertyRef Name="DiscountTaxID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Items_UOM">
+          <End Role="UOM" Type="Self.UOM" Multiplicity="0..1" />
+          <End Role="Items" Type="Self.Items" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UOM">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Items">
+              <PropertyRef Name="UOMId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Order_Customer">
+          <End Role="Customer" Type="Self.Customer" Multiplicity="0..1" />
+          <End Role="Order" Type="Self.Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="CustomerCode" />
+            </Principal>
+            <Dependent Role="Order">
+              <PropertyRef Name="CustomerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Order_Order">
+          <End Role="Order" Type="Self.Order" Multiplicity="1" />
+          <End Role="Order1" Type="Self.Order" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Order">
+              <PropertyRef Name="OID" />
+            </Principal>
+            <Dependent Role="Order1">
+              <PropertyRef Name="OID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Order_TaxDiscount">
+          <End Role="TaxDiscount" Type="Self.TaxDiscount" Multiplicity="0..1" />
+          <End Role="Order" Type="Self.Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TaxDiscount">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Order">
+              <PropertyRef Name="DiscountTaxId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_OrderDetails_Customer">
+          <End Role="Customer" Type="Self.Customer" Multiplicity="1" />
+          <End Role="OrderDetails" Type="Self.OrderDetails" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="CustomerCode" />
+            </Principal>
+            <Dependent Role="OrderDetails">
+              <PropertyRef Name="CustomerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_OrderDetails_Items">
+          <End Role="Items" Type="Self.Items" Multiplicity="1" />
+          <End Role="OrderDetails" Type="Self.OrderDetails" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Items">
+              <PropertyRef Name="IId" />
+            </Principal>
+            <Dependent Role="OrderDetails">
+              <PropertyRef Name="ItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_OrderDetails_Order">
+          <End Role="Order" Type="Self.Order" Multiplicity="0..1" />
+          <End Role="OrderDetails" Type="Self.OrderDetails" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Order">
+              <PropertyRef Name="OID" />
+            </Principal>
+            <Dependent Role="OrderDetails">
+              <PropertyRef Name="OID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="ShoppingModelStoreContainer">
+          <EntitySet Name="Cart" EntityType="Self.Cart" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Customer" EntityType="Self.Customer" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Items" EntityType="Self.Items" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Order" EntityType="Self.Order" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="OrderDetails" EntityType="Self.OrderDetails" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TaxDiscount" EntityType="Self.TaxDiscount" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UOM" EntityType="Self.UOM" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Items_TaxDiscount" Association="Self.FK_Items_TaxDiscount">
+            <End Role="TaxDiscount" EntitySet="TaxDiscount" />
+            <End Role="Items" EntitySet="Items" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Items_UOM" Association="Self.FK_Items_UOM">
+            <End Role="UOM" EntitySet="UOM" />
+            <End Role="Items" EntitySet="Items" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Order_Customer" Association="Self.FK_Order_Customer">
+            <End Role="Customer" EntitySet="Customer" />
+            <End Role="Order" EntitySet="Order" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Order_Order" Association="Self.FK_Order_Order">
+            <End Role="Order" EntitySet="Order" />
+            <End Role="Order1" EntitySet="Order" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Order_TaxDiscount" Association="Self.FK_Order_TaxDiscount">
+            <End Role="TaxDiscount" EntitySet="TaxDiscount" />
+            <End Role="Order" EntitySet="Order" />
+          </AssociationSet>
+          <AssociationSet Name="FK_OrderDetails_Customer" Association="Self.FK_OrderDetails_Customer">
+            <End Role="Customer" EntitySet="Customer" />
+            <End Role="OrderDetails" EntitySet="OrderDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK_OrderDetails_Items" Association="Self.FK_OrderDetails_Items">
+            <End Role="Items" EntitySet="Items" />
+            <End Role="OrderDetails" EntitySet="OrderDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK_OrderDetails_Order" Association="Self.FK_OrderDetails_Order">
+            <End Role="Order" EntitySet="Order" />
+            <End Role="OrderDetails" EntitySet="OrderDetails" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="ShoppingModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Cart">
+          <Key>
+            <PropertyRef Name="CId" />
+            <PropertyRef Name="ItemId" />
+          </Key>
+          <Property Name="CId" Type="Int32" Nullable="false" />
+          <Property Name="ItemId" Type="Int32" Nullable="false" />
+          <Property Name="Qty" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Customer">
+          <Key>
+            <PropertyRef Name="CustomerCode" />
+          </Key>
+          <Property Name="CustomerCode" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DesAr" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DesEn" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Orders" Relationship="Self.FK_Order_Customer" FromRole="Customer" ToRole="Order" />
+          <NavigationProperty Name="OrderDetails" Relationship="Self.FK_OrderDetails_Customer" FromRole="Customer" ToRole="OrderDetails" />
+        </EntityType>
+        <EntityType Name="Item">
+          <Key>
+            <PropertyRef Name="IId" />
+          </Key>
+          <Property Name="IId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="IDescription" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Qty" Type="Int32" />
+          <Property Name="Price" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="Image" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="UOMId" Type="Int32" />
+          <Property Name="DiscountTaxID" Type="Int32" />
+          <NavigationProperty Name="TaxDiscount" Relationship="Self.FK_Items_TaxDiscount" FromRole="Items" ToRole="TaxDiscount" />
+          <NavigationProperty Name="UOM" Relationship="Self.FK_Items_UOM" FromRole="Items" ToRole="UOM" />
+          <NavigationProperty Name="OrderDetails" Relationship="Self.FK_OrderDetails_Items" FromRole="Items" ToRole="OrderDetails" />
+        </EntityType>
+        <EntityType Name="Order">
+          <Key>
+            <PropertyRef Name="OID" />
+          </Key>
+          <Property Name="OID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OrderDate" Type="DateTime" Precision="0" />
+          <Property Name="RequestDate" Type="DateTime" Precision="0" />
+          <Property Name="DueDate" Type="DateTime" Precision="0" />
+          <Property Name="Satuts" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CustomerId" Type="Int32" />
+          <Property Name="DiscountTaxId" Type="Int32" />
+          <NavigationProperty Name="Customer" Relationship="Self.FK_Order_Customer" FromRole="Order" ToRole="Customer" />
+          <NavigationProperty Name="Order1" Relationship="Self.FK_Order_Order" FromRole="Order" ToRole="Order1" />
+          <NavigationProperty Name="Order2" Relationship="Self.FK_Order_Order" FromRole="Order1" ToRole="Order" />
+          <NavigationProperty Name="TaxDiscount" Relationship="Self.FK_Order_TaxDiscount" FromRole="Order" ToRole="TaxDiscount" />
+          <NavigationProperty Name="OrderDetails" Relationship="Self.FK_OrderDetails_Order" FromRole="Order" ToRole="OrderDetails" />
+        </EntityType>
+        <EntityType Name="OrderDetail">
+          <Key>
+            <PropertyRef Name="ODID" />
+          </Key>
+          <Property Name="ODID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OrderQty" Type="Int32" />
+          <Property Name="Total" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="Net" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="ItemId" Type="Int32" Nullable="false" />
+          <Property Name="OID" Type="Int32" />
+          <Property Name="CustomerId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Customer" Relationship="Self.FK_OrderDetails_Customer" FromRole="OrderDetails" ToRole="Customer" />
+          <NavigationProperty Name="Item" Relationship="Self.FK_OrderDetails_Items" FromRole="OrderDetails" ToRole="Items" />
+          <NavigationProperty Name="Order" Relationship="Self.FK_OrderDetails_Order" FromRole="OrderDetails" ToRole="Order" />
+        </EntityType>
+        <EntityType Name="TaxDiscount">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Tax" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="Discount" Type="Decimal" Precision="18" Scale="0" />
+          <NavigationProperty Name="Items" Relationship="Self.FK_Items_TaxDiscount" FromRole="TaxDiscount" ToRole="Items" />
+          <NavigationProperty Name="Orders" Relationship="Self.FK_Order_TaxDiscount" FromRole="TaxDiscount" ToRole="Order" />
+        </EntityType>
+        <EntityType Name="UOM">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Des" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Items" Relationship="Self.FK_Items_UOM" FromRole="UOM" ToRole="Items" />
+        </EntityType>
+        <Association Name="FK_Order_Customer">
+          <End Role="Customer" Type="Self.Customer" Multiplicity="0..1" />
+          <End Role="Order" Type="Self.Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="CustomerCode" />
+            </Principal>
+            <Dependent Role="Order">
+              <PropertyRef Name="CustomerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_OrderDetails_Customer">
+          <End Role="Customer" Type="Self.Customer" Multiplicity="1" />
+          <End Role="OrderDetails" Type="Self.OrderDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="CustomerCode" />
+            </Principal>
+            <Dependent Role="OrderDetails">
+              <PropertyRef Name="CustomerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Items_TaxDiscount">
+          <End Role="TaxDiscount" Type="Self.TaxDiscount" Multiplicity="0..1" />
+          <End Role="Items" Type="Self.Item" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TaxDiscount">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Items">
+              <PropertyRef Name="DiscountTaxID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Items_UOM">
+          <End Role="UOM" Type="Self.UOM" Multiplicity="0..1" />
+          <End Role="Items" Type="Self.Item" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UOM">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Items">
+              <PropertyRef Name="UOMId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_OrderDetails_Items">
+          <End Role="Items" Type="Self.Item" Multiplicity="1" />
+          <End Role="OrderDetails" Type="Self.OrderDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Items">
+              <PropertyRef Name="IId" />
+            </Principal>
+            <Dependent Role="OrderDetails">
+              <PropertyRef Name="ItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Order_Order">
+          <End Role="Order" Type="Self.Order" Multiplicity="1" />
+          <End Role="Order1" Type="Self.Order" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Order">
+              <PropertyRef Name="OID" />
+            </Principal>
+            <Dependent Role="Order1">
+              <PropertyRef Name="OID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Order_TaxDiscount">
+          <End Role="TaxDiscount" Type="Self.TaxDiscount" Multiplicity="0..1" />
+          <End Role="Order" Type="Self.Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TaxDiscount">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Order">
+              <PropertyRef Name="DiscountTaxId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_OrderDetails_Order">
+          <End Role="Order" Type="Self.Order" Multiplicity="0..1" />
+          <End Role="OrderDetails" Type="Self.OrderDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Order">
+              <PropertyRef Name="OID" />
+            </Principal>
+            <Dependent Role="OrderDetails">
+              <PropertyRef Name="OID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="ShoppingEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Carts" EntityType="Self.Cart" />
+          <EntitySet Name="Customers" EntityType="Self.Customer" />
+          <EntitySet Name="Items" EntityType="Self.Item" />
+          <EntitySet Name="Orders" EntityType="Self.Order" />
+          <EntitySet Name="OrderDetails" EntityType="Self.OrderDetail" />
+          <EntitySet Name="TaxDiscounts" EntityType="Self.TaxDiscount" />
+          <EntitySet Name="UOMs" EntityType="Self.UOM" />
+          <AssociationSet Name="FK_Order_Customer" Association="Self.FK_Order_Customer">
+            <End Role="Customer" EntitySet="Customers" />
+            <End Role="Order" EntitySet="Orders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_OrderDetails_Customer" Association="Self.FK_OrderDetails_Customer">
+            <End Role="Customer" EntitySet="Customers" />
+            <End Role="OrderDetails" EntitySet="OrderDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Items_TaxDiscount" Association="Self.FK_Items_TaxDiscount">
+            <End Role="TaxDiscount" EntitySet="TaxDiscounts" />
+            <End Role="Items" EntitySet="Items" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Items_UOM" Association="Self.FK_Items_UOM">
+            <End Role="UOM" EntitySet="UOMs" />
+            <End Role="Items" EntitySet="Items" />
+          </AssociationSet>
+          <AssociationSet Name="FK_OrderDetails_Items" Association="Self.FK_OrderDetails_Items">
+            <End Role="Items" EntitySet="Items" />
+            <End Role="OrderDetails" EntitySet="OrderDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Order_Order" Association="Self.FK_Order_Order">
+            <End Role="Order" EntitySet="Orders" />
+            <End Role="Order1" EntitySet="Orders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Order_TaxDiscount" Association="Self.FK_Order_TaxDiscount">
+            <End Role="TaxDiscount" EntitySet="TaxDiscounts" />
+            <End Role="Order" EntitySet="Orders" />
+          </AssociationSet>
+          <AssociationSet Name="FK_OrderDetails_Order" Association="Self.FK_OrderDetails_Order">
+            <End Role="Order" EntitySet="Orders" />
+            <End Role="OrderDetails" EntitySet="OrderDetails" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="ShoppingModelStoreContainer" CdmEntityContainer="ShoppingEntities">
+          <EntitySetMapping Name="Carts">
+            <EntityTypeMapping TypeName="ShoppingModel.Cart">
+              <MappingFragment StoreEntitySet="Cart">
+                <ScalarProperty Name="CId" ColumnName="CId" />
+                <ScalarProperty Name="ItemId" ColumnName="ItemId" />
+                <ScalarProperty Name="Qty" ColumnName="Qty" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Customers">
+            <EntityTypeMapping TypeName="ShoppingModel.Customer">
+              <MappingFragment StoreEntitySet="Customer">
+                <ScalarProperty Name="CustomerCode" ColumnName="CustomerCode" />
+                <ScalarProperty Name="DesAr" ColumnName="DesAr" />
+                <ScalarProperty Name="DesEn" ColumnName="DesEn" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Items">
+            <EntityTypeMapping TypeName="ShoppingModel.Item">
+              <MappingFragment StoreEntitySet="Items">
+                <ScalarProperty Name="IId" ColumnName="IId" />
+                <ScalarProperty Name="IName" ColumnName="IName" />
+                <ScalarProperty Name="IDescription" ColumnName="IDescription" />
+                <ScalarProperty Name="Qty" ColumnName="Qty" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="Image" ColumnName="Image" />
+                <ScalarProperty Name="UOMId" ColumnName="UOMId" />
+                <ScalarProperty Name="DiscountTaxID" ColumnName="DiscountTaxID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Orders">
+            <EntityTypeMapping TypeName="ShoppingModel.Order">
+              <MappingFragment StoreEntitySet="Order">
+                <ScalarProperty Name="OID" ColumnName="OID" />
+                <ScalarProperty Name="OrderDate" ColumnName="OrderDate" />
+                <ScalarProperty Name="RequestDate" ColumnName="RequestDate" />
+                <ScalarProperty Name="DueDate" ColumnName="DueDate" />
+                <ScalarProperty Name="Satuts" ColumnName="Satuts" />
+                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+                <ScalarProperty Name="DiscountTaxId" ColumnName="DiscountTaxId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OrderDetails">
+            <EntityTypeMapping TypeName="ShoppingModel.OrderDetail">
+              <MappingFragment StoreEntitySet="OrderDetails">
+                <ScalarProperty Name="ODID" ColumnName="ODID" />
+                <ScalarProperty Name="OrderQty" ColumnName="OrderQty" />
+                <ScalarProperty Name="Total" ColumnName="Total" />
+                <ScalarProperty Name="Net" ColumnName="Net" />
+                <ScalarProperty Name="ItemId" ColumnName="ItemId" />
+                <ScalarProperty Name="OID" ColumnName="OID" />
+                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TaxDiscounts">
+            <EntityTypeMapping TypeName="ShoppingModel.TaxDiscount">
+              <MappingFragment StoreEntitySet="TaxDiscount">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Tax" ColumnName="Tax" />
+                <ScalarProperty Name="Discount" ColumnName="Discount" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UOMs">
+            <EntityTypeMapping TypeName="ShoppingModel.UOM">
+              <MappingFragment StoreEntitySet="UOM">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Des" ColumnName="Des" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

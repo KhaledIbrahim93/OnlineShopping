@@ -1,0 +1,210 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="ShoppingModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="Cart">
+    <Key>
+      <PropertyRef Name="CId" />
+      <PropertyRef Name="ItemId" />
+    </Key>
+    <Property Name="CId" Type="int" Nullable="false" />
+    <Property Name="ItemId" Type="int" Nullable="false" />
+    <Property Name="Qty" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Customer">
+    <Key>
+      <PropertyRef Name="CustomerCode" />
+    </Key>
+    <Property Name="CustomerCode" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="DesAr" Type="nvarchar" MaxLength="50" />
+    <Property Name="DesEn" Type="nvarchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="Items">
+    <Key>
+      <PropertyRef Name="IId" />
+    </Key>
+    <Property Name="IId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="IName" Type="nvarchar" MaxLength="50" />
+    <Property Name="IDescription" Type="nvarchar" MaxLength="100" />
+    <Property Name="Qty" Type="int" />
+    <Property Name="Price" Type="decimal" Precision="18" Scale="0" />
+    <Property Name="Image" Type="nvarchar" MaxLength="200" />
+    <Property Name="UOMId" Type="int" />
+    <Property Name="DiscountTaxID" Type="int" />
+  </EntityType>
+  <EntityType Name="Order">
+    <Key>
+      <PropertyRef Name="OID" />
+    </Key>
+    <Property Name="OID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="OrderDate" Type="date" />
+    <Property Name="RequestDate" Type="date" />
+    <Property Name="DueDate" Type="date" />
+    <Property Name="Satuts" Type="nvarchar" MaxLength="50" />
+    <Property Name="CustomerId" Type="int" />
+    <Property Name="DiscountTaxId" Type="int" />
+  </EntityType>
+  <EntityType Name="OrderDetails">
+    <Key>
+      <PropertyRef Name="ODID" />
+    </Key>
+    <Property Name="ODID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="OrderQty" Type="int" />
+    <Property Name="Total" Type="decimal" Precision="18" Scale="0" />
+    <Property Name="Net" Type="decimal" Precision="18" Scale="0" />
+    <Property Name="ItemId" Type="int" Nullable="false" />
+    <Property Name="OID" Type="int" />
+    <Property Name="CustomerId" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="TaxDiscount">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Tax" Type="decimal" Precision="18" Scale="0" />
+    <Property Name="Discount" Type="decimal" Precision="18" Scale="0" />
+  </EntityType>
+  <EntityType Name="UOM">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Code" Type="nvarchar" MaxLength="50" />
+    <Property Name="Des" Type="nvarchar" MaxLength="50" />
+  </EntityType>
+  <Association Name="FK_Items_TaxDiscount">
+    <End Role="TaxDiscount" Type="Self.TaxDiscount" Multiplicity="0..1" />
+    <End Role="Items" Type="Self.Items" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="TaxDiscount">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="Items">
+        <PropertyRef Name="DiscountTaxID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Items_UOM">
+    <End Role="UOM" Type="Self.UOM" Multiplicity="0..1" />
+    <End Role="Items" Type="Self.Items" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="UOM">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Items">
+        <PropertyRef Name="UOMId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Order_Customer">
+    <End Role="Customer" Type="Self.Customer" Multiplicity="0..1" />
+    <End Role="Order" Type="Self.Order" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Customer">
+        <PropertyRef Name="CustomerCode" />
+      </Principal>
+      <Dependent Role="Order">
+        <PropertyRef Name="CustomerId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Order_Order">
+    <End Role="Order" Type="Self.Order" Multiplicity="1" />
+    <End Role="Order1" Type="Self.Order" Multiplicity="0..1" />
+    <ReferentialConstraint>
+      <Principal Role="Order">
+        <PropertyRef Name="OID" />
+      </Principal>
+      <Dependent Role="Order1">
+        <PropertyRef Name="OID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Order_TaxDiscount">
+    <End Role="TaxDiscount" Type="Self.TaxDiscount" Multiplicity="0..1" />
+    <End Role="Order" Type="Self.Order" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="TaxDiscount">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="Order">
+        <PropertyRef Name="DiscountTaxId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_OrderDetails_Customer">
+    <End Role="Customer" Type="Self.Customer" Multiplicity="1" />
+    <End Role="OrderDetails" Type="Self.OrderDetails" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Customer">
+        <PropertyRef Name="CustomerCode" />
+      </Principal>
+      <Dependent Role="OrderDetails">
+        <PropertyRef Name="CustomerId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_OrderDetails_Items">
+    <End Role="Items" Type="Self.Items" Multiplicity="1" />
+    <End Role="OrderDetails" Type="Self.OrderDetails" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Items">
+        <PropertyRef Name="IId" />
+      </Principal>
+      <Dependent Role="OrderDetails">
+        <PropertyRef Name="ItemId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_OrderDetails_Order">
+    <End Role="Order" Type="Self.Order" Multiplicity="0..1" />
+    <End Role="OrderDetails" Type="Self.OrderDetails" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Order">
+        <PropertyRef Name="OID" />
+      </Principal>
+      <Dependent Role="OrderDetails">
+        <PropertyRef Name="OID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="ShoppingModelStoreContainer">
+    <EntitySet Name="Cart" EntityType="Self.Cart" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Customer" EntityType="Self.Customer" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Items" EntityType="Self.Items" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Order" EntityType="Self.Order" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="OrderDetails" EntityType="Self.OrderDetails" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="TaxDiscount" EntityType="Self.TaxDiscount" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="UOM" EntityType="Self.UOM" Schema="dbo" store:Type="Tables" />
+    <AssociationSet Name="FK_Items_TaxDiscount" Association="Self.FK_Items_TaxDiscount">
+      <End Role="TaxDiscount" EntitySet="TaxDiscount" />
+      <End Role="Items" EntitySet="Items" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Items_UOM" Association="Self.FK_Items_UOM">
+      <End Role="UOM" EntitySet="UOM" />
+      <End Role="Items" EntitySet="Items" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Order_Customer" Association="Self.FK_Order_Customer">
+      <End Role="Customer" EntitySet="Customer" />
+      <End Role="Order" EntitySet="Order" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Order_Order" Association="Self.FK_Order_Order">
+      <End Role="Order" EntitySet="Order" />
+      <End Role="Order1" EntitySet="Order" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Order_TaxDiscount" Association="Self.FK_Order_TaxDiscount">
+      <End Role="TaxDiscount" EntitySet="TaxDiscount" />
+      <End Role="Order" EntitySet="Order" />
+    </AssociationSet>
+    <AssociationSet Name="FK_OrderDetails_Customer" Association="Self.FK_OrderDetails_Customer">
+      <End Role="Customer" EntitySet="Customer" />
+      <End Role="OrderDetails" EntitySet="OrderDetails" />
+    </AssociationSet>
+    <AssociationSet Name="FK_OrderDetails_Items" Association="Self.FK_OrderDetails_Items">
+      <End Role="Items" EntitySet="Items" />
+      <End Role="OrderDetails" EntitySet="OrderDetails" />
+    </AssociationSet>
+    <AssociationSet Name="FK_OrderDetails_Order" Association="Self.FK_OrderDetails_Order">
+      <End Role="Order" EntitySet="Order" />
+      <End Role="OrderDetails" EntitySet="OrderDetails" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>
